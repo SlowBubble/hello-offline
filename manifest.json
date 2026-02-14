@@ -1,6 +1,6 @@
 {
     "name": "Hello App",
     "short_name": "Hello",
-    "start_url": "/",
+    "start_url": "./",
     "display": "standalone"
 }

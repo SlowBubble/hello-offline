@@ -1,7 +1,7 @@
-const CACHE = 'v1';
+const CACHE = 'v2';
 
 self.addEventListener('install', e => {
-    e.waitUntil(caches.open(CACHE).then(cache => cache.addAll(['/', '/index.html'])));
+    e.waitUntil(caches.open(CACHE).then(cache => cache.addAll(['./', './index.html'])));
 });
 
 self.addEventListener('fetch', e => {
