@@ -15,8 +15,10 @@ The main HTML file that displays "Hello". It includes:
 This is the magic behind offline support. It runs in the background and intercepts network requests.
 
 **How it works:**
-- **Install event**: When the service worker is first installed, it caches the files (`/` and `/index.html`)
+- **Install event**: When the service worker is first installed, it caches the files (`./` and `./index.html`)
 - **Fetch event**: When the browser requests a file, the service worker checks the cache first. If found, it serves the cached version. If not, it fetches from the network.
+
+**Important**: Uses relative paths (`./`) instead of absolute paths (`/`) so it works in subdirectories like GitHub Pages.
 
 ### 3. `manifest.json`
 Defines the app as a PWA, allowing it to be installed on devices and run standalone.
@@ -29,19 +31,20 @@ Defines the app as a PWA, allowing it to be installed on devices and run standal
    - Keep this code in `index.html`:
    ```javascript
    if ('serviceWorker' in navigator) {
-       navigator.serviceWorker.register('sw.js');
+       navigator.serviceWorker.register('sw.js', { scope: './' });
    }
    ```
 
 2. **Update the cache version when making changes**
-   - In `sw.js`, change `const CACHE = 'v1';` to `'v2'`, `'v3'`, etc.
+   - In `sw.js`, change `const CACHE = 'v2';` to `'v3'`, `'v4'`, etc.
    - This ensures users get the latest version
 
 3. **Add new files to the cache**
-   - If you add CSS, JS, or other files, add them to the cache array:
+   - If you add CSS, JS, or other files, add them to the cache array using relative paths:
    ```javascript
-   cache.addAll(['/', '/index.html', '/style.css', '/app.js'])
+   cache.addAll(['./', './index.html', './style.css', './app.js'])
    ```
+   - **Always use relative paths (`./`)** not absolute paths (`/`) for subdirectory compatibility
 
 4. **Don't rename core files without updating the cache**
    - If you rename `index.html`, update the cache array in `sw.js`
@@ -59,5 +62,15 @@ Defines the app as a PWA, allowing it to be installed on devices and run standal
 ## Common Issues
 
 - **Service worker not updating**: Increment the cache version and hard refresh (Ctrl+Shift+R)
-- **Files not loading offline**: Make sure they're added to the cache array
+- **Files not loading offline**: Make sure they're added to the cache array with relative paths (`./`)
 - **Service worker not registering**: Must be served over HTTPS or localhost
+- **Works locally but not on GitHub Pages**: Make sure you're using relative paths (`./`) not absolute paths (`/`)
+
+## Why Relative Paths?
+
+This app uses relative paths (`./`) instead of absolute paths (`/`) because:
+- Works in subdirectories (like `github.io/hello-offline/`)
+- Works at root domains (like `example.com/`)
+- Makes the app portable to any hosting environment
+
+See `doc/m1a-fix.md` for details on the GitHub Pages subdirectory fix.
